@@ -40,4 +40,4 @@ if __name__ == '__main__':
                 print("wrong Choice, Try again ...")
 
     except :
-            print("Program closed /Failed to load server")
+            print("Program closed")

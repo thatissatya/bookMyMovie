@@ -13,5 +13,5 @@ Reference: https://in.bookmyshow.com -->
 
 ## table details : admin - admin(email,mobile,password, securityKey)
 ## table details : user - user(email,mobile,password, securityKey)
-## table details : movies - movies(id INTEGER AUTO_INCREMENT, movie_name VARCHAR(30),city VARCHAR(20), show_time VARCHAR(8), expire_date VARCHAR(10), available_seat INT DEFAULT 120)
+## table details : movies - movies(movie_name VARCHAR(30),city VARCHAR(20), show_time VARCHAR(8), expire_date VARCHAR(10), available_seat INT DEFAULT 120)
 ## table details :mybooking - mybooking(email VARCHAR(50), movie_name VARCHAR(30), city VARCHAR(20), show_time VARCHAR(8), totalseat INT)
