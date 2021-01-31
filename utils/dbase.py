@@ -241,7 +241,6 @@ def changeAccountPassword(usertype, email, newpassword):
         sqlchangepassword =  "UPDATE user SET password = " + newpassword + "WHERE email = " + email 
     
     # establish database connectivity
-    print(sqlchangepassword)
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
         my_cursor = mydb.cursor()

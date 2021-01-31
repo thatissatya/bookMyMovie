@@ -1,6 +1,6 @@
 import mysql.connector
 
-def cancelShow(email, moviename, showtime, city):
+def cancelShow(email, moviename, city, showtime):
     
     from datetime import datetime
     now = datetime.now()
@@ -40,4 +40,4 @@ def cancelShow(email, moviename, showtime, city):
     my_cursor.close()
     mydb.close()
 
-cancelShow('satya@nitt.edu','bloodshot', '08:30:00', 'indore') 
+cancelShow('satya@nitt.edu','bloodshot', 'indore' ,'08:30:00') 
