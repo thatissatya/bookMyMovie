@@ -20,7 +20,7 @@ def userPanel(usertype, email):
         elif choice == 2:
 
             movieName = input("Enter Movie Name : ")
-            showtime = input("Enter New showtime Name : ")
+            showtime = input("Enter New Slot time(HH:MM:SS) : ")
             city = input("Enter city Name : ")
             totalseat = input("Enter No. of seat : ")
             bookshow(email, movieName, showtime, city, totalseat)
@@ -36,7 +36,7 @@ def userPanel(usertype, email):
             cancelShow(email, movieName, showtime, city)
 
         elif choice == 5:
-            choice = input("press:\n1. Search by City\n2. Search by Name\n3. Search by Time")
+            choice = input("press:\n1. Search by City\n2. Search by Name\n3. Search by Time : ")
             
             if choice == 1:
                 city = input("Enter city Name : ")
@@ -45,7 +45,7 @@ def userPanel(usertype, email):
                 moviename = input("Enter the Movie Name : ")
                 searchByName(moviename)
             elif choice == 3:
-                slot = input("Enter Movie Time HH:MM:SS : ")
+                slot = input("Enter Movie Time(HH:MM:SS) : ")
                 searchByTime(slot)
             else:
                 print("Wrong Choice try again .. ")

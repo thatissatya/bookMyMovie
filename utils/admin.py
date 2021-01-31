@@ -11,15 +11,15 @@ def adminPanel(usertype, email):
     while True:
 
         #admin can either add a new show or remove and existing show
-        choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. Change Password\n5. Logout "))
+        choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. Change Password\n5. Logout : "))
 
         if choice == 1:
 
             movieName = input("Enter Movie Name : ")
             city = input("Enter City Name : ")
-            showtimes = input("Enter Show time ")
-            expiredate = input("Enter last day of the show")
-            seatAvailable = (input("Enter No. of Seats : "))
+            showtimes = input("Enter Slot time(HH:MM:SS) : ")
+            expiredate = input("Enter last day(YYYY-MM-DD) of the show : ")
+            seatAvailable = input("Enter No. of Seats : ")
             createShow(movieName,city, showtimes, expiredate, seatAvailable)
 
         elif choice == 2:
@@ -30,8 +30,8 @@ def adminPanel(usertype, email):
 
         elif choice == 3:
             movieName = input("Enter Movie Name : ")
-            showtime = input("Enter New showtime Name : ")
-            expiredate = input("Enter New expire date of movie")
+            showtime = input("Enter New Slot Time(HH:MM:SS) Name : ")
+            expiredate = input("Enter New expire date (YYYY-MM-DD) of movie : ")
             updateShow(movieName, showtime, expiredate)
 
         elif choice == 4:
@@ -44,5 +44,5 @@ def adminPanel(usertype, email):
         else:
             print("wrong input, Try Again ")
 
-        system('cls')
+        
 
