@@ -12,7 +12,7 @@ def userPanel(usertype, email):
     while True:
 
         #admin can either add a new show or remove and existing show
-        choice = int(input("1. Display Show\n2. Book Show\n3. My Bookings\n4. Cancel Show\n5. Filter Movie\n6. Change Password\n7. Logout  "))
+        choice = int(input("1. Display Show\n2. Book Show\n3. My Bookings\n4. Cancel Show\n5. Filter Movie\n6. Change Password\n7. Logout : "))
 
         if choice == 1:
             displayShow()
@@ -31,12 +31,12 @@ def userPanel(usertype, email):
 
         elif choice == 4:
             movieName = input("Enter Movie Name : ")
-            showtime = input("Enter New showtime Name : ")
+            showtime = input("Enter New showtime(HH:MM:SS) Name : ")
             city = input("Enter city Name : ")
             cancelShow(email, movieName, showtime, city)
 
         elif choice == 5:
-            choice = input("press:\n1. Search by City\n2. Search by Name\n3. Search by Time : ")
+            choice = int(input("press:\n1. Search by City\n2. Search by Name\n3. Search by Time : "))
             
             if choice == 1:
                 city = input("Enter city Name : ")
@@ -61,5 +61,5 @@ def userPanel(usertype, email):
         else:
             print("wrong input, Try Again ")
 
-        system('cls')
+        
 

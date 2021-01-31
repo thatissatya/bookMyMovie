@@ -81,7 +81,7 @@ def createAccount(usertype, email, mobile, password, security_key):
         sqlcreate = "INSERT INTO admin(email, mobile, password, security_key) VALUES(%s, %s, %s, %s)"
     else :
         sqlcreate = "INSERT INTO user(email, mobile, password, security_key) VALUES(%s, %s, %s, %s)"
-    print(sqlcreate)
+    
     #establish connection to mysql database and use table user
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -373,10 +373,10 @@ def displayShow():
     try :   
         my_cursor.execute("SELECT * FROM movies")
         result = my_cursor.fetchall()
-        print("movie\tcity\t\ttime\t\t\texpire_date\t\tavailable Seat")
+        print("\tmovie\t\t\tcity\t\t\ttime\t\t\texpire_date\t\t\tavailable Seat")
         print("")
         for row in result:
-            print(row[0] + "\t%s" %row[1] + "\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t%s"%row[4])
+            print("\t%s" %row[0] + "\t\t\t%s" %row[1] + "\t\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t\t%s"%row[4])
     except :
         print("failed to load the shows")
 
@@ -389,9 +389,10 @@ def displayShow():
 def bookshow(email, moviename, showtime, city, seat):
     my_cursor = ''
     mydb = ''
-
+    
     record =(email, moviename, showtime, city, seat)
     sqlbookshow = "INSERT INTO mybooking(email, movie_name, city, show_time, totalseat) VALUES(%s, %s, %s, %s, %s)"
+    
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -418,8 +419,8 @@ def displayMyBooking(email):
 
     my_cursor = ''
     mydb = ''
-    record =(email)
-    sqlsearch = "SELECT * FROM mybooking WHERE email = %s"
+    email = '"' + email + '"'
+    sqlsearch = "SELECT * FROM mybooking WHERE email = " + email
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -431,12 +432,15 @@ def displayMyBooking(email):
 
     # loading personal booked show
     try :   
-        my_cursor.execute(sqlsearch, record)
+        my_cursor.execute(sqlsearch)
         result = my_cursor.fetchall()
         print("movie\tcity\t\ttime\tbooked_seat")
-        print("----")
-        for row in result:
-            print(row[1] + "\t%s" %row[2] + "\t\t%s" %row[3] + "\t%s" %row[4])
+
+        if len(result):
+            for row in result:
+                print(row[1] + "\t%s" %row[2] + "\t\t%s" %row[3] + "\t%s" %row[4])
+        else :
+            print("No booking yet")
     except :
         print("failed to load the shows")
 
@@ -474,7 +478,7 @@ def cancelShow(email, moviename, showtime, city):
     try :   
         my_cursor.execute(sqlsearch, record)
         result = my_cursor.fetchall()
-        if len(result) and flag:
+        if len(result):
             my_cursor.execute(sqldelete, record)
             print("Show Deleted")
         else:
@@ -598,7 +602,6 @@ def checkDuplicate(moviename, showtime, city):
         result = my_cursor.fetchall()
         
         for row in result:
-            print(row)
             if row[0] == moviename and row[1] == city and row[2] == showtime:
                 return False
             else:

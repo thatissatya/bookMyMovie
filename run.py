@@ -1,19 +1,22 @@
 import mysql.connector
 
-def showMyPassword(usertype, email, resetKey):
-
+def cancelShow(email, moviename, showtime, city):
+    
+    from datetime import datetime
+    now = datetime.now()
+    flag = False
     my_cursor = ''
     mydb = ''
 
-    # sql query to update the password
-    if usertype == 1:
-        sqlchangepassword = "SELECT *FROM admin WHERE email = %s AND security_key = %s"
-    else :
-        sqlchangepassword = "SELECT *FROM user WHERE email = %s AND security_key = %s"
-    
-    record = (email, resetKey)
-    # establish database connectivity
+    record = (email, moviename, showtime, city)
 
+    #query for fetching the record
+    sqlsearch = "SELECT *FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+    #query for deleting the recording
+    sqldelete = "DELETE FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+    # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
         my_cursor = mydb.cursor()
@@ -21,19 +24,20 @@ def showMyPassword(usertype, email, resetKey):
     except :
         print("Database doesnot exist")
 
-    #updating the password
-    try :
-        my_cursor.execute(sqlchangepassword, record)
+
+    # loading personal booked show
+    try :   
+        my_cursor.execute(sqlsearch, record)
         result = my_cursor.fetchall()
         if len(result):
-            print("your password : ", result[0][2])
+            my_cursor.execute(sqldelete, record)
+            print("Show Deleted")
         else:
-            print("email / resetkey wrong, try again")
+            print("Delete show before 2hr / booking not found")
     except :
-        print("cann't find account")
-    
-    #closing connection from database
+        print("Error! could book the show.")
+
     my_cursor.close()
     mydb.close()
 
-showMyPassword(1, "satya@nitt.edu", "1254") 
+cancelShow('satya@nitt.edu','bloodshot', '08:30:00', 'indore') 

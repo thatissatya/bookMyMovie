@@ -11,7 +11,7 @@ Python + Backend (CLI based movie booking System)
 Note: Create database schema, necessary tables and initial data as per the need to achieve the same
 Reference: https://in.bookmyshow.com -->
 
-## table details : admin - admin(email,mobile,password, securityKey)
-## table details : user - user(email,mobile,password, securityKey)
-## table details : movies - movies(movie_name VARCHAR(30),city VARCHAR(20), show_time VARCHAR(8), expire_date VARCHAR(10), available_seat INT DEFAULT 120)
-## table details :mybooking - mybooking(email VARCHAR(50), movie_name VARCHAR(30), city VARCHAR(20), show_time VARCHAR(8), totalseat INT)
+ table details : admin - admin(email,mobile,password, securityKey)
+ table details : user - user(email,mobile,password, securityKey)
+ table details : movies - movies(movie_name VARCHAR(30),city VARCHAR(20), show_time VARCHAR(8), expire_date VARCHAR(10), available_seat varchar(3))
+ table details :mybooking - mybooking(email VARCHAR(50), movie_name VARCHAR(30), city VARCHAR(20), show_time VARCHAR(8), totalseat INT)
