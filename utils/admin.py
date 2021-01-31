@@ -1,30 +1,48 @@
-from utils.addShow import addNewShow
-from utils.removeShow import dropShow
+from os import system
+from utils.dbase import createShow
+from utils.dbase import deleteShow
+from utils.dbase import updateShow
+from utils.dbase import  changeAccountPassword
 
-def adminPanel():
+
+def adminPanel(usertype, email):
 
     #admin work --- admin panel
     while True:
 
         #admin can either add a new show or remove and existing show
-        choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. Logout "))
+        choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. Change Password\n5. Logout "))
 
         if choice == 1:
+
             movieName = input("Enter Movie Name : ")
+            city = input("Enter City Name : ")
             showtimes = input("Enter Show time ")
-            seatAvailable = int(input("Enter No. of Seats : "))
-            lastdateofShow = input("Enter last day of the show")
-            addNewShow(movieName, showtimes, seatAvailable, lastdateofShow)
+            expiredate = input("Enter last day of the show")
+            seatAvailable = (input("Enter No. of Seats : "))
+            createShow(movieName,city, showtimes, expiredate, seatAvailable)
 
         elif choice == 2:
-            print("removing show ...")
-        
+
+            movieName = input("Enter Movie Name : ")
+            city = input("Enter city Name : ")
+            deleteShow(movieName, city)
+
         elif choice == 3:
-            print("Updating show .. ")
+            movieName = input("Enter Movie Name : ")
+            showtime = input("Enter New showtime Name : ")
+            expiredate = input("Enter New expire date of movie")
+            updateShow(movieName, showtime, expiredate)
 
         elif choice == 4:
+            newpassword = input("Enter New Password : ")
+            changeAccountPassword(usertype, email, newpassword)
+
+        elif choice == 5:
             break
 
         else:
             print("wrong input, Try Again ")
+
+        system('cls')
 

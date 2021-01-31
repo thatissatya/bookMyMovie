@@ -1,22 +1,27 @@
+from os import system
 from utils.login import userlogin
 from utils.singup import usersignup
 from utils.recoverAccount import getYourPassword
-from utils.dbase import dbCreate, tableCreate
+from utils.dbase import dbCreate
+from utils.dbase import tableCreate
 
 if __name__ == '__main__':
 
     try :
         dbCreate()
         tableCreate()
+        system('cls')
+        usertype = int(input("Enter\n 1. for Admin\n 2. for Customer "))
+        system('cls')
         while True:
 
             #command line option visible to end-user
             choice = int(input("1. Login \n2. Sign-up\n3. Reset Password\n4. Exit : "))
-
+            system("cls")
             if choice == 1:
                 email = input("Enter E-mail : ")
                 password = input("Enter Password : ")
-                usertype = int(input("Enter\n 1. for Admin\n 2. for Customer "))
+                system("cls")
                 userlogin(usertype, email, password)
                 
 
@@ -24,20 +29,21 @@ if __name__ == '__main__':
                 email = input("Enter E-mail : ")
                 mobile = input("Enter Mobile No. : ")
                 password = input("Enter Password : ")
-                usertype = int(input("Enter\n 1. for Admin\n 2. for Customer "))
+                system("cls")
                 usersignup(usertype, email, mobile, password)
 
             elif choice == 3:
                 email = input("Enter E-mail : ")
-                mobile = input("Enter Mobile No. : ")
                 resetkey = input("Enter 4 digit unique resetKey : ")
-                print(getYourPassword(email, mobile, resetkey))
+                system("cls")
+                getYourPassword(usertype, email, resetkey)
 
             elif choice == 4:
                 exit()
 
             else :
                 print("wrong Choice, Try again ...")
+                system("cls")
 
     except :
             print("Program closed")

@@ -17,7 +17,7 @@ def dbCreate():
         mydb.close()
 
     except :
-        print("database already exist or Failed to connect to database ")
+       print("database already exist")
 
 
 #creating tables for application incase it is not already in database
@@ -59,7 +59,7 @@ def tableCreate():
 
     #table for specific user booked show
     try :
-        my_cursor.execute("CREATE TABLE mybooking(email VARCHAR(50), movie_name VARCHAR(30), city VARCHAR(20), show_time VARCHAR(8), totalseat INT)")
+        my_cursor.execute("CREATE TABLE mybooking(email VARCHAR(50), movie_name VARCHAR(30), city VARCHAR(20), show_time VARCHAR(8), totalseat VARCHAR(3))")
 
     except:
         print("myshow table already exist ")
@@ -187,7 +187,44 @@ def deleteAccount(usertype, email, password):
     mydb.close()
 
 
-def changeAccountPassword(usertype, email, newpassword, resetKey):
+# find your password using security key
+def showMyPassword(usertype, email, resetKey):
+
+    my_cursor = ''
+    mydb = ''
+
+    # sql query to update the password
+    if usertype == 1:
+        sqlchangepassword = "SELECT *FROM admin WHERE email = %s AND security_key = %s"
+    else :
+        sqlchangepassword = "SELECT *FROM user WHERE email = %s AND security_key = %s"
+    
+    record = (email, resetKey)
+    # establish database connectivity
+
+    try :
+        mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+        my_cursor = mydb.cursor()
+
+    except :
+        print("Database doesnot exist")
+
+    #updating the password
+    try :
+        my_cursor.execute(sqlchangepassword, record)
+        result = my_cursor.fetchall()
+        if len(result):
+            print("your password : ", result[0][2])
+        else:
+            print("email / resetkey wrong, try again")
+    except :
+        print("cann't find account")
+    
+    #closing connection from database
+    my_cursor.close()
+    mydb.close()
+
+def changeAccountPassword(usertype, email, newpassword):
     
     my_cursor = ''
     mydb = ''
@@ -195,13 +232,13 @@ def changeAccountPassword(usertype, email, newpassword, resetKey):
 
     newpassword = '"' + newpassword + '" '
     email = '"' + email + '"'
-    resetKey = '"' + resetKey + '"'
+    
 
     # sql query to update the password
     if usertype == 1:
-        sqlchangepassword = "UPDATE admin SET password = " + newpassword + "WHERE email = " + email  + " AND security_key = " + resetKey
+        sqlchangepassword = "UPDATE admin SET password = " + newpassword + "WHERE email = " + email 
     else :
-        sqlchangepassword =  "UPDATE user SET password = " + newpassword + "WHERE email = " + email + " AND security_key = " + resetKey
+        sqlchangepassword =  "UPDATE user SET password = " + newpassword + "WHERE email = " + email 
     
     # establish database connectivity
     print(sqlchangepassword)
@@ -354,7 +391,7 @@ def bookshow(email, moviename, showtime, city, seat):
     mydb = ''
 
     record =(email, moviename, showtime, city, seat)
-    sqlbookshow = "INSERT INTO mybooking(email, movie_name, city, show_time, totalseat ) VALUES(%s, %s, %s, %s, %s)"
+    sqlbookshow = "INSERT INTO mybooking(email, movie_name, city, show_time, totalseat) VALUES(%s, %s, %s, %s, %s)"
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -367,7 +404,7 @@ def bookshow(email, moviename, showtime, city, seat):
     # loading personal booked show
     try :   
         my_cursor.execute(sqlbookshow, record)
-
+        mydb.commit()
         print("show booked successfully")
     except :
         print("Error! could book the show.")
@@ -375,12 +412,14 @@ def bookshow(email, moviename, showtime, city, seat):
     my_cursor.close()
     mydb.close()
 
-    
+
 # for displaying personal bookings
-def displayMyBooking():
+def displayMyBooking(email):
 
     my_cursor = ''
     mydb = ''
+    record =(email)
+    sqlsearch = "SELECT * FROM mybooking WHERE email = %s"
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -392,7 +431,7 @@ def displayMyBooking():
 
     # loading personal booked show
     try :   
-        my_cursor.execute("SELECT * FROM mybooking")
+        my_cursor.execute(sqlsearch, record)
         result = my_cursor.fetchall()
         print("movie\tcity\t\ttime\tbooked_seat")
         print("----")
@@ -400,6 +439,48 @@ def displayMyBooking():
             print(row[1] + "\t%s" %row[2] + "\t\t%s" %row[3] + "\t%s" %row[4])
     except :
         print("failed to load the shows")
+
+    my_cursor.close()
+    mydb.close()
+
+
+#cancel my show
+def cancelShow(email, moviename, showtime, city):
+    
+    from datetime import datetime
+    now = datetime.now()
+    flag = False
+    my_cursor = ''
+    mydb = ''
+
+    record = (email, moviename, showtime, city)
+
+    #query for fetching the record
+    sqlsearch = "SELECT *FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+    #query for deleting the recording
+    sqldelete = "DELETE FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+    # establish database connectivity
+    try :
+        mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+        my_cursor = mydb.cursor()
+
+    except :
+        print("Database doesnot exist")
+
+
+    # loading personal booked show
+    try :   
+        my_cursor.execute(sqlsearch, record)
+        result = my_cursor.fetchall()
+        if len(result) and flag:
+            my_cursor.execute(sqldelete, record)
+            print("Show Deleted")
+        else:
+            print("Delete show before 2hr / booking not found")
+    except :
+        print("Error! could book the show.")
 
     my_cursor.close()
     mydb.close()

@@ -1,5 +1,6 @@
 import random
-from utils.credentialverifier import verifyMobile, verifyEmail
+from utils.credentialverifier import verifyMobile
+from utils.credentialverifier import  verifyEmail
 from utils.dbase import createAccount
 
 def usersignup(usertype, email, mobile, password):

@@ -1,12 +1,19 @@
 import mysql.connector
 
-def bookshow(email, moviename, showtime, city, seat):
+def showMyPassword(usertype, email, resetKey):
+
     my_cursor = ''
     mydb = ''
 
-    record =(email, moviename, showtime, city, seat)
-    sqlbookshow = "INSERT INTO mybooking(email, movie_name, city, show_time, totalseat ) VALUES(%s, %s, %s, %s, %s)"
+    # sql query to update the password
+    if usertype == 1:
+        sqlchangepassword = "SELECT *FROM admin WHERE email = %s AND security_key = %s"
+    else :
+        sqlchangepassword = "SELECT *FROM user WHERE email = %s AND security_key = %s"
+    
+    record = (email, resetKey)
     # establish database connectivity
+
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
         my_cursor = mydb.cursor()
@@ -14,18 +21,19 @@ def bookshow(email, moviename, showtime, city, seat):
     except :
         print("Database doesnot exist")
 
-
-    # loading personal booked show
-    try :   
-        my_cursor.execute(sqlbookshow, record)
-
-        print("show booked successfully")
+    #updating the password
+    try :
+        my_cursor.execute(sqlchangepassword, record)
+        result = my_cursor.fetchall()
+        if len(result):
+            print("your password : ", result[0][2])
+        else:
+            print("email / resetkey wrong, try again")
     except :
-        print("Error! could book the show.")
-
+        print("cann't find account")
+    
+    #closing connection from database
     my_cursor.close()
     mydb.close()
 
-
-
-bookshow("satya@nitt.edu", "avatar","indore", "6:20:00", 10)
+showMyPassword(1, "satya@nitt.edu", "1254") 

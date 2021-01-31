@@ -10,15 +10,15 @@ def userlogin(usertype, email, password):
         if usertype == 1:
 
             if login(email, password, usertype) :
-                adminPanel()
+                adminPanel(usertype, email)
             else:
                 print("Username / Password did not match, try again ...")
-
+                
                 
         elif usertype == 2:
 
             if login(email, password, usertype):
-                userPanel()
+                userPanel(usertype, email)
             else:
                 print("Username / Password did not match, try again ...")
 
