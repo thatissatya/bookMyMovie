@@ -1,18 +1,16 @@
 import random
 from utils.credentialverifier import verifyMobile, verifyEmail
+from utils.dbase import createAccount
 
+def usersignup(usertype, email, mobile, password):
 
-def usersignup(email, mobile, password):
+    #security Key generation
     resetKey = random.randint(1000,10000)
+
     #before user creation verify the email and mobile no.
     if verifyEmail(email) and  verifyMobile(mobile) :
-        
-        fptr = open('users.txt','a')
-        user = email + '-' + str(mobile) + '-' + password + "-" + str(resetKey) + ' '
-        fptr.write(user)
-        fptr.close()
-        print("Note down the password reset key : ", resetKey)
-        print("Successfully Registered ")
+
+        createAccount(usertype , email, mobile, password, resetKey)
 
     else :
         print("Error, input not valid ")

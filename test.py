@@ -1,23 +1,3 @@
-import random
-print(random.randint(1000,10000))
-
-import mysql.connector
-
-mydb = mysql.connector.connect(host ='localhost', user = 'root', passwd = 'toor', database = 'nitt')
-mycr = mydb.cursor()
-print(mycr)
-# var = mycr.execute("CREATE DATABASE nitt")
-# mycr.close()
-# mydb.close()
-my_cursor = mydb.cursor()
-
-#table for admin credentials
-my_cursor.execute("CREATE TABLE admin(email VARCHAR(50) PRIMARY KEY, mobile BIGINT(10), password VARCHAR(10), security_key INT(4))")
-
-
-
-
-
 import mysql.connector
 
 #SET MYSQL CONNECTION
@@ -107,41 +87,3 @@ mydb.commit()
 # DELETE DROP TABLE
 my_sql = "DROP TABLE IF EXISTS users"
 my_cursor.execute(my_sql)
-
-
-# import mysql.connector 
-
-# # mydb = mysql.connector.connect(host ='localhost', user = 'root' , passwd = 'toor',  auth_plugin='mysql_native_password')
-
-# # my_cur = mydb.cursor()
-
-# # #var = my_cur.execute('create database satya') # for creation of database
-
-# # # my_cur.execute('show databases') #show existing databases
-
-# # for db in my_cur:
-# #     print(db[0])
-
-# mydb = mysql.connector.connect(host ='localhost', user = 'root' ,
-#  passwd = 'toor', 
-#  database = 'satya'
-#  )
-
-# my_cursor = mydb.cursor()
-
-# #my_cursor.execute("CREATE TABLE person (name varchar(25) UNIQUE, city varchar(50))")
-# # my_cursor.execute("SHOW TABLES")
-
-# # for table in my_cursor:
-# #     print(table[0])
-# # sqlinsert = "INSERT INTO person(name, city) VALUES(%s, %s)"
-# # record =("SATYA", "INDORE")
-# # my_cursor.execute("INSERT INTO person(%s, %s) VALUES("anshu", "bihar")")
-# # mydb.commit()
-# my_cursor.execute("UPDATE person SET city = 'gopalganj' where city = 'INDORE' ")
-# my_cursor.execute("select *from person where city = 'gopalganj'")
-# result = my_cursor.fetchall()
-
-# for row in result:
-#     print(row)
-#     print(type(row))

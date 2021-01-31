@@ -1,35 +1,32 @@
 from utils.credentialverifier import verifyEmail
 from utils.admin import adminPanel
 from utils.user import userPanel
+from utils.dbase import login
 
-def userlogin(email, password):
+def userlogin(usertype, email, password):
 
     #check the validity of the credentials
     if verifyEmail(email):
+        if usertype == 1:
 
-        fptr = open('users.txt', 'r')
-        usercredential = fptr.readlines()
-        usercredential = usercredential[0].split()
-        fptr.close()
-        #verifying the existing user
+            if login(email, password, usertype) :
+                adminPanel()
+            else:
+                print("Username / Password did not match, try again ...")
 
-        flag = False
+                
+        elif usertype == 2:
 
-        for user in usercredential:
-            details = user.split('-')
-            if email == details[0] and password == details[2]  :
-                flag = True
-                print("Login Successfull")
-                break
-
-        # if user is admin, jump to adminPanel or switch to userPanel
-        if flag :
-            if email == 'satya@gamil.com':
-                    adminPanel()
-            else :
-                    userPanel()
+            if login(email, password, usertype):
+                userPanel()
+            else:
+                print("Username / Password did not match, try again ...")
 
         else :
-            print("user not found")
+
+                print("Wrong Usertype. Try Again")
+       
+        
     else :
         print("invalid email, try again ")
+         

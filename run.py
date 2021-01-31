@@ -1,26 +1,80 @@
 import mysql.connector
 
-mydb = mysql.connector.connect(host ='localhost', user = 'root', passwd = 'toor', database = 'nitt')
+def createAccount(usertype, email, mobile, password, security_key):
+
+    my_cursor = ''
+    mydb = ''
+
+    sqlcreate = ''
+    record =(email, mobile, password, security_key)
+    
+    if usertype == 1:
+        sqlcreate = "INSERT INTO admin(email, mobile, password, security_key) VALUES(%s, %s, %s, %s)"
+    else :
+        sqlcreate = "INSERT INTO user(email, mobile, password, security_key) VALUES(%s, %s, %s, %s)"
+    print(sqlcreate)
+    #establish connection to mysql database and use table user
+    try :
+        mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+        my_cursor = mydb.cursor()
+
+    except :
+        print("Database doesnot exist")
+    
+    try :
+        my_cursor.execute(sqlcreate,record)
+        mydb.commit()
+        status = True
+        print("Accound Created Successful")
+    except :
+        print("Failed to add new user")
+
+    my_cursor.close()
+    mydb.close()
 
 
-my_cursor = mydb.cursor()
+def login(email, password, usertype):
+
+
+    my_cursor = ''
+    mydb = ''
+    usercount = 0
+
+    email = '"' + email + '"'
+    password = '"' + password + '"'
+
+    if usertype == 1:
+
+        sqlsearch = "SELECT * FROM admin WHERE email = " + email + " AND " + " password = " + password 
+
+    else :
+        
+        sqlsearch = "SELECT * FROM user WHERE email = " + email + " AND " + " password = " + password
 
 
 
-try :
-    my_cursor.execute("CREATE TABLE trex(day  varchar(10), ts varchar(8))")
-except :
-    print("table already exist")
-d = "'1996-01-22'"
-t = "08:00:00"
-#sqlinsert = "INSERT INTO trex(day, ts) VALUES(%s, %s)"
-record = (d)
-# my_cursor.execute(sqlinsert, record)
-# mydb.commit()
+    #establish connection to mysql database and use table users
+    try :
+        mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+        my_cursor = mydb.cursor()
+
+    except :
+        print("Database doesnot exist")
+    
+    try :
+        my_cursor.execute(sqlsearch)
+        usercount = my_cursor.fetchall()
+        print(usercount)
+        if len(usercount) :
+            print("Login Successful")
+    except :
+        print("Failed to login")
+
+    my_cursor.close()
+    mydb.close()
+
+    
 
 
-# record = ("1996-01-22")
-sqldel = "DELETE FROM trex WHERE day = " + d
-print(sqldel)
-my_cursor.execute(sqldel)
-mydb.commit()
+
+login("prakash@nitt.edu","12345", 2)
