@@ -1,22 +1,20 @@
 import mysql.connector
 
-def cancelShow(email, moviename, city, showtime):
-    
-    from datetime import datetime
-    now = datetime.now()
-    flag = False
+def getSeatCount(email, movie, city, showtime):
+
     my_cursor = ''
     mydb = ''
+    avail_seat = 0
 
-    record = (email, moviename, showtime, city)
+    
+    movie = '"' + movie + '"'
+    city  = '"' + city  + '"'
+    showtime = '"'  + showtime + '"'
+    email = '"' + email + '"'
 
-    #query for fetching the record
-    sqlsearch = "SELECT *FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+    sqlfetch = "SELECT * FROM  mybooking WHERE movie_name = " + movie + " AND city = " + city + " AND show_time = " + showtime + " AND email = " + email
+    print(sqlfetch)
 
-    #query for deleting the recording
-    sqldelete = "DELETE FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
-
-    # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
         my_cursor = mydb.cursor()
@@ -24,20 +22,24 @@ def cancelShow(email, moviename, city, showtime):
     except :
         print("Database doesnot exist")
 
-
-    # loading personal booked show
     try :   
-        my_cursor.execute(sqlsearch, record)
+        my_cursor.execute(sqlfetch)
         result = my_cursor.fetchall()
-        if len(result):
-            my_cursor.execute(sqldelete, record)
-            print("Show Deleted")
+        
+        if len(result) :
+            avail_seat = int(result[0][4])
         else:
-            print("Delete show before 2hr / booking not found")
-    except :
-        print("Error! could book the show.")
+            avail_seat = 0
+        
 
+    except :
+        print("failed to fetch data/ update tables")
+
+    #closing connection from database
     my_cursor.close()
     mydb.close()
 
-cancelShow('satya@nitt.edu','bloodshot', 'indore' ,'08:30:00') 
+    return avail_seat
+
+
+print(getSeatCount('satya@nitt.edu', 'bloodshot', 'indore', '08:30:00'))

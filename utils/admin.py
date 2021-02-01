@@ -13,8 +13,12 @@ def adminPanel(usertype, email):
     while True:
 
         #admin can either add a new show or remove and existing show
-        choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. View Availabe Show\n5. Change Password\n6. Logout : "))
-
+        choice = ''
+        try :
+            choice = int(input("1. Add Show\n2. Remove Show\n3. Update Show\n4. View Availabe Show\n5. Change Password\n6. Logout : "))
+        except :
+            print("Please Enter integer Value")
+        system('cls')
         if choice == 1:
 
             movieName = input("Enter Movie Name : ")
@@ -47,6 +51,7 @@ def adminPanel(usertype, email):
             changeAccountPassword(usertype, email, newpassword)
 
         elif choice == 6:
+            system('cls')
             break
 
         else:

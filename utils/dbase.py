@@ -134,8 +134,6 @@ def login(email, password, usertype):
     try :
         my_cursor.execute(sqlsearch)
         usercount = my_cursor.fetchall()
-        print("Login Successful")
-
     except :
         print("Failed to login")
 
@@ -372,10 +370,10 @@ def displayShow():
     try :   
         my_cursor.execute("SELECT * FROM movies")
         result = my_cursor.fetchall()
-        print("\tmovie\t\t\tcity\t\t\ttime\t\t\texpire_date\t\t\tavailable Seat")
+        print("\t\tmovie\t\tcity\t\ttime\t\texpire_date\tavailable Seat")
         print("")
         for row in result:
-            print("\t%s" %row[0] + "\t\t\t%s" %row[1] + "\t\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t\t%s"%row[4])
+            print("%20s       " %row[0] + "%10s    " %row[1] + "   %10s      " %row[2] + "   %10s    " %row[3] + "   %10s    "%row[4])
     except :
         print("failed to load the shows")
 
@@ -383,13 +381,12 @@ def displayShow():
     my_cursor.close()
     mydb.close()
 
-
 #book my show
 def bookshow(email, moviename, showtime, city, seat):
     my_cursor = ''
     mydb = ''
     
-    record =(email, moviename, showtime, city, seat)
+    record =(email, moviename, city, showtime, seat)
     sqlbookshow = "INSERT INTO mybooking(email, movie_name, city, show_time, totalseat) VALUES(%s, %s, %s, %s, %s)"
     
     # establish database connectivity
@@ -433,11 +430,11 @@ def displayMyBooking(email):
     try :   
         my_cursor.execute(sqlsearch)
         result = my_cursor.fetchall()
-        print("movie\tcity\t\ttime\tbooked_seat")
-
+        print("\t\tmovie\t\tcity\t\ttime\t\tbooked_seat")
+        print("")
         if len(result):
             for row in result:
-                print(row[1] + "\t%s" %row[2] + "\t\t%s" %row[3] + "\t%s" %row[4])
+                print("%20s       " %row[1] + "%10s    " %row[2] + "   %10s      " %row[3] + "   %10s    " %row[4])
         else :
             print("No booking yet")
     except :
@@ -452,19 +449,118 @@ def cancelShow(email, moviename, showtime, city):
     
     from datetime import datetime
     now = datetime.now()
-    flag = False
+    current_time = now.strftime("%H:%M:%S")
+    cslot = current_time.split(':')
+    mslot = showtime.split(':')
+    minutes = int(mslot[1]) - int(cslot[1])
+    timestamp = (int(mslot[0]) - int(cslot[0]) ) * 60 + minutes
+    
+    if timestamp < 120:
+        print("Cann't be deleted, time difference should be 2hr min")
+    else :
+    
+        my_cursor = ''
+        mydb = ''
+
+        record = (email, moviename, showtime, city)
+
+        #query for fetching the record
+        sqlsearch = "SELECT *FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+        #query for deleting the recording
+        sqldelete = "DELETE FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+
+        # establish database connectivity
+        try :
+            mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+            my_cursor = mydb.cursor()
+
+        except :
+            print("Database doesnot exist")
+
+
+        # loading personal booked show
+        try :   
+            my_cursor.execute(sqlsearch, record)
+            result = my_cursor.fetchall()
+            if len(result):
+                my_cursor.execute(sqldelete, record)
+                mydb.commit()
+                print("Show Deleted")
+            else:
+                print("No show found ")
+        except :
+            print("Error! could book the show.")
+
+        my_cursor.close()
+        mydb.close()
+
+
+#update  Seat before and after booking
+def seatUpdate(movie, city, time, seat):
+
     my_cursor = ''
     mydb = ''
 
-    record = (email, moviename, showtime, city)
+    if int(seat) > 10 and int(seat) < -10 :
+        print("You can book only max of 10 seat in  a row")
+    else:
+        
+        movie = '"' + movie + '"'
+        city  = '"' + city  + '"'
+        time = '"'  + time + '"'
 
-    #query for fetching the record
-    sqlsearch = "SELECT *FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+        sqlfetch = "SELECT * FROM  movies WHERE movie_name = " + movie + " AND city = " + city + " AND show_time = " + time
+        #print(sqlfetch)
 
-    #query for deleting the recording
-    sqldelete = "DELETE FROM mybooking WHERE email = %s AND movie_name = %s AND show_time = %s AND city = %s"
+        try :
+            mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
+            my_cursor = mydb.cursor()
 
-    # establish database connectivity
+        except :
+            print("Database doesnot exist")
+
+        try :   
+            my_cursor.execute(sqlfetch)
+            result = my_cursor.fetchall()
+            avail_seat = int(result[0][4])
+            if( int(seat) > avail_seat):
+                print(seat, " Seat is not available ")
+            else:
+
+               remain_seat = avail_seat - int(seat) 
+               remain_seat = '"' + str(remain_seat) +'"'
+               sqlupdate = "UPDATE movies SET available_seat = " + remain_seat + " WHERE movie_name = " + movie + " AND city = " + city + " AND show_time = " + time
+               #print(sqlupdate)
+               my_cursor.execute(sqlupdate)
+               mydb.commit()
+               print("ticket booked successful")
+
+
+        except :
+            print("failed to fetch data/ update tables")
+
+        #closing connection from database
+        my_cursor.close()
+        mydb.close()
+
+
+# get total no. of seat booked
+def getSeatCount(email, movie, city, showtime):
+
+    my_cursor = ''
+    mydb = ''
+    avail_seat = 0
+
+    
+    movie = '"' + movie + '"'
+    city  = '"' + city  + '"'
+    showtime = '"'  + showtime + '"'
+    email = '"' + email + '"'
+
+    sqlfetch = "SELECT * FROM  mybooking WHERE movie_name = " + movie + " AND city = " + city + " AND show_time = " + showtime + " AND email = " + email
+    #print(sqlfetch)
+
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
         my_cursor = mydb.cursor()
@@ -472,29 +568,32 @@ def cancelShow(email, moviename, showtime, city):
     except :
         print("Database doesnot exist")
 
-
-    # loading personal booked show
     try :   
-        my_cursor.execute(sqlsearch, record)
+        my_cursor.execute(sqlfetch)
         result = my_cursor.fetchall()
-        if len(result):
-            my_cursor.execute(sqldelete, record)
-            print("Show Deleted")
+        
+        if len(result) :
+            avail_seat = int(result[0][4])
         else:
-            print("Delete show before 2hr / booking not found")
-    except :
-        print("Error! could book the show.")
+            avail_seat = 0
+        
 
+    except :
+        print("failed to fetch data/ update tables")
+
+    #closing connection from database
     my_cursor.close()
     mydb.close()
 
+    return avail_seat
 
 #search by city
 def searchByCity(city):
 
     my_cursor = ''
     mydb = ''
-
+    city = '"' + city + '"'
+    sqlfetch = "SELECT * FROM movies WHERE city = " + city
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -504,16 +603,15 @@ def searchByCity(city):
         print("Database doesnot exist")
 
     try :   
-        my_cursor.execute("SELECT * FROM movies")
+        my_cursor.execute(sqlfetch)
         result = my_cursor.fetchall()
-        print("movie\tcity\t\ttime\t\t\texpire_date\t\tavailable Seat")
+        print("\t\tmovie\t\tcity\t\ttime\t\texpire_date\tavailable Seat")
         print("")
         for row in result:
-            if row[1] == city:
-                print(row[0] + "\t%s" %row[1] + "\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t%s"%row[4])
+            print("%20s       " %row[0] + "%10s    " %row[1] + "   %10s      " %row[2] + "   %10s    " %row[3] + "   %10s    "%row[4])
 
     except :
-        print("failed to verify redundancy")
+        print("failed to fetch data")
 
     #closing connection from database
     my_cursor.close()
@@ -526,6 +624,8 @@ def searchByTime(showtime):
     my_cursor = ''
     mydb = ''
 
+    showtime = '"' + showtime + '"'
+    sqlfetch = "SELECT * FROM movies WHERE city = " + showtime
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -535,13 +635,12 @@ def searchByTime(showtime):
         print("Database doesnot exist")
 
     try :   
-        my_cursor.execute("SELECT * FROM movies")
+        my_cursor.execute(sqlfetch)
         result = my_cursor.fetchall()
-        print("movie\tcity\t\ttime\t\t\texpire_date\t\tavailable Seat")
+        print("\t\tmovie\t\tcity\t\ttime\t\texpire_date\tavailable Seat")
         print("")
         for row in result:
-            if row[2] == showtime:
-                print(row[0] + "\t%s" %row[1] + "\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t%s"%row[4])
+            print("%20s       " %row[0] + "%10s    " %row[1] + "   %10s      " %row[2] + "   %10s    " %row[3] + "   %10s    "%row[4])
 
     except :
         print("failed to verify redundancy")
@@ -556,7 +655,8 @@ def searchByName(moviename):
 
     my_cursor = ''
     mydb = ''
-
+    moviename = '"' + moviename + '"'
+    sqlfetch = "SELECT *FROM movies WHERE movie_name = " + moviename
     # establish database connectivity
     try :
         mydb = mysql.connector.connect(host = 'localhost', user ='satya', passwd ='admin', database = 'bookmymovie')
@@ -566,14 +666,12 @@ def searchByName(moviename):
         print("Database doesnot exist")
 
     try :   
-        my_cursor.execute("SELECT * FROM movies")
+        my_cursor.execute(sqlfetch)
         result = my_cursor.fetchall()
-        print("movie\tcity\t\ttime\t\t\texpire_date\t\tavailable Seat")
+        print("\t\tmovie\t\tcity\t\ttime\t\texpire_date\tavailable Seat")
         print("")
         for row in result:
-            if row[0] == moviename:
-                print(row[0] + "\t%s" %row[1] + "\t\t%s" %row[2] + "\t\t\t%s" %row[3] + "\t\t%s"%row[4])
-
+            print("%20s       " %row[0] + "%10s    " %row[1] + "   %10s      " %row[2] + "   %10s    " %row[3] + "   %10s    "%row[4])
     except :
         print("failed to verify redundancy")
 
@@ -599,15 +697,14 @@ def checkDuplicate(moviename, showtime, city):
     try :   
         my_cursor.execute("SELECT * FROM movies")
         result = my_cursor.fetchall()
-        
         for row in result:
             if row[0] == moviename and row[1] == city and row[2] == showtime:
                 return False
-            else:
-                return True
+            
     except :
         print("failed to verify redundancy")
 
     #closing connection from database
     my_cursor.close()
     mydb.close()
+    return True

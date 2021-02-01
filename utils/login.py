@@ -3,6 +3,7 @@ from utils.admin import adminPanel
 from utils.user import userPanel
 from utils.dbase import login
 
+
 def userlogin(usertype, email, password):
 
     #check the validity of the credentials
@@ -10,6 +11,7 @@ def userlogin(usertype, email, password):
         if usertype == 1:
 
             if login(email, password, usertype) :
+                print("Login Successful")
                 adminPanel(usertype, email)
             else:
                 print("Username / Password did not match, try again ...")
@@ -18,6 +20,7 @@ def userlogin(usertype, email, password):
         elif usertype == 2:
 
             if login(email, password, usertype):
+                print("Login Successful")
                 userPanel(usertype, email)
             else:
                 print("Username / Password did not match, try again ...")
